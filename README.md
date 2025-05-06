@@ -1,10 +1,21 @@
-# Diabetes Classification Project
+# Diabetes Classifier
 
-A machine learning project for diabetes prediction using custom mathematical functions without relying on external ML libraries.
+A machine learning project for diabetes prediction using custom mathematical implementations.
 
-## Project Overview
+## Overview
 
-This project implements a diabetes classifier from scratch using custom mathematical functions. Instead of using scikit-learn or other ML libraries, we've built a custom implementation of logistic regression and evaluation metrics using the functions in our `math_utils.py` library.
+This project implements a diabetes classification system using logistic regression with custom mathematical functions. Instead of relying on standard libraries like scikit-learn for all operations, many core mathematical functions are implemented from scratch in the `math_utils.py` module, providing educational value and greater control over the implementation.
+
+## Key Features
+
+- Custom implementation of common mathematical functions (mean, variance, distance metrics, etc.)
+- Custom implementation of machine learning operations (sigmoid, softmax, loss functions, etc.)
+- Logistic regression classifier with L2 regularization
+- Multiple feature normalization techniques (z-score, min-max)
+- Feature selection based on class separation metrics
+- Comprehensive model evaluation metrics
+- Visualization of model performance and feature importance
+- Advanced analysis including decision boundaries and calibration curves
 
 ## Project Structure
 
@@ -18,140 +29,98 @@ This project implements a diabetes classifier from scratch using custom mathemat
 │
 ├── data/                       # Dataset storage
 │   ├── raw/                    # Raw data
-│   │   └── diabetes.csv        # Original diabetes dataset
-│   └── processed/              # Processed data
+│   ├── processed/              # Processed data
 │
 ├── tests/                      # Unit tests
 │   ├── test_math_utils.py      # Tests for math functions
-│   └── test_classifier.py      # Tests for classification logic
+│   ├── test_classifier.py      # Tests for classification logic
 │
 ├── scripts/                    # Executable scripts
 │   ├── preprocess.py           # Data preprocessing
 │   ├── train.py                # Model training
-│   └── evaluate.py             # Model evaluation
-│
-├── results/                    # Directory for evaluation results
-├── README.md                   # Project overview
-└── requirements.txt            # Dependencies
+│   ├── evaluate.py             # Model evaluation
 ```
 
-## Features
+## Mathematical Functions
 
-- **Custom Mathematical Implementation**: Uses our own mathematical functions for all ML operations
-- **Logistic Regression Classifier**: Built from scratch for diabetes prediction
-- **Preprocessing Pipeline**: Custom data cleaning and normalization
-- **Comprehensive Evaluation**: Multiple metrics and visualizations
-- **Unit Tests**: Ensuring mathematical functions work correctly
+The project includes custom implementations of:
 
-## Key Components
+### Basic Statistics
+- Mean, variance, standard deviation
+- Min-max scaling, z-score normalization
 
-1. `math_utils.py`: Contains custom mathematical functions for:
-   - Descriptive statistics (mean, variance, standard deviation)
-   - Distance metrics (Euclidean, Manhattan)
-   - Normalization (min-max scaling, z-score)
-   - Activation functions (sigmoid, ReLU, Leaky ReLU)
-   - Evaluation metrics (MSE, cross-entropy loss)
+### Distance Metrics
+- Euclidean distance
+- Manhattan distance
+- Cosine similarity
 
-2. **Preprocess the data:**
-   ```bash
-   python scripts/preprocess.py
-   ```
+### ML Functions
+- Sigmoid activation
+- ReLU and Leaky ReLU activations
+- Softmax function
+- Dot product operations
 
-3. **Train the model:**
-   ```bash
-   python scripts/train.py
-   ```
+### Loss Functions
+- Mean squared error
+- Cross-entropy loss
+- Entropy calculation
+- Gini index
+- Information gain
 
-4. **Evaluate the model:**
-   ```bash
-   python scripts/evaluate.py
-   ```
+## Usage
 
-## Implementation Details
+### Installation
 
-### Custom Logistic Regression
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/diabetes-classifier.git
+cd diabetes-classifier
 
-Our custom implementation of logistic regression uses gradient descent to optimize the model parameters. The implementation follows these steps:
-
-1. Initialize weights and bias to zeros
-2. For each iteration:
-   - Calculate the linear model: z = X·w + b
-   - Apply the sigmoid activation function
-   - Compute gradients for weights and bias
-   - Update parameters using the learning rate
-
-```python
-# Simplified example of our training logic
-def train(X_train, y_train):
-    n_samples, n_features = X_train.shape
-    weights = np.zeros(n_features)
-    bias = 0
-    
-    for _ in range(iterations):
-        linear_model = np.dot(X_train, weights) + bias
-        y_predicted = np.array([sigmoid(x) for x in linear_model])
-        
-        dw = (1 / n_samples) * np.dot(X_train.T, (y_predicted - y_train))
-        db = (1 / n_samples) * np.sum(y_predicted - y_train)
-        
-        weights -= learning_rate * dw
-        bias -= learning_rate * db
+# Install dependencies
+pip install -r requirements.txt
 ```
 
 ### Data Preprocessing
 
-Our preprocessing pipeline includes:
+```bash
+python scripts/preprocess.py
+```
 
-1. Handling missing values (zeros in certain features)
-2. Feature normalization using z-score (from our math_utils library)
-3. Feature engineering, including BMI and age categorization
+### Model Training
 
-### Evaluation Metrics
+```bash
+python scripts/train.py
+```
 
-We calculate metrics using our custom functions from math_utils.py:
+### Model Evaluation
 
-- Accuracy: Proportion of correct predictions
-- Precision: TP / (TP + FP)
-- Recall: TP / (TP + FN)
-- F1 Score: 2 * (Precision * Recall) / (Precision + Recall)
-- MSE: Custom implementation from math_utils
-- Cross-Entropy Loss: Custom implementation from math_utils
-- ROC Curve and AUC: Manual implementation without sklearn
+```bash
+python scripts/evaluate.py
+```
 
 ## Dataset
 
-The Pima Indians Diabetes Dataset consists of medical predictor variables including:
-- Pregnancies: Number of times pregnant
-- Glucose: Plasma glucose concentration
-- BloodPressure: Diastolic blood pressure (mm Hg)
-- SkinThickness: Triceps skin fold thickness (mm)
-- Insulin: 2-Hour serum insulin (mu U/ml)
-- BMI: Body mass index
-- DiabetesPedigreeFunction: Diabetes pedigree function
-- Age: Age in years
-- Outcome: Class variable (0 or 1) - 1 means tested positive for diabetes
+The project uses the Pima Indians Diabetes Dataset, which contains various health-related features such as glucose level, blood pressure, BMI, etc., for predicting diabetes diagnosis.
 
-## License
+Features include:
+- Pregnancies
+- Glucose
+- BloodPressure
+- SkinThickness
+- Insulin
+- BMI
+- DiabetesPedigreeFunction
+- Age
+- Outcome (target variable)
 
-MIT License
+## Future Enhancements
+
+- Implementation of additional classification algorithms
+- Support for multiclass classification problems
+- Feature engineering improvements
+- Hyperparameter optimization using custom metrics
+- Interactive visualization dashboard
 
 ## Contributing
 
-Contributions welcome! Please feel free to submit a Pull Request. `classifier.py`: Custom logistic regression implementation using:
-   - Sigmoid activation function
-   - Gradient descent optimization
-   - Custom prediction logic
-
-3. `evaluation.py`: Model evaluation logic with custom metrics:
-   - Accuracy, precision, recall, F1 score
-   - Mean squared error and cross-entropy loss
-   - ROC curve and AUC calculation
-
-## Installation & Usage
-
-1. **Setup the environment:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2.
+Contributions are welcome! Please feel free to submit a Pull Request.
