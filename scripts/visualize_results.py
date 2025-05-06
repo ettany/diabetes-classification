@@ -274,9 +274,9 @@ def plot_feature_distributions_density(df, save_path=None):
         
         # Calculate custom statistics
         mean_0 = mean(values_0)
-        std_0 = standard_deviation(values_0)
+        std_0 = max(standard_deviation(values_0), 1e-6)  # Ensure non-zero std
         mean_1 = mean(values_1)
-        std_1 = standard_deviation(values_1)
+        std_1 = max(standard_deviation(values_1), 1e-6)  # Ensure non-zero std
         
         # Generate KDE curves manually
         x = np.linspace(min(min(values_0), min(values_1)), 
@@ -286,17 +286,21 @@ def plot_feature_distributions_density(df, save_path=None):
         y_0 = np.zeros_like(x)
         y_1 = np.zeros_like(x)
         
+        # Add small bandwidth to avoid division by zero
+        bandwidth_0 = max(std_0, 0.01)
+        bandwidth_1 = max(std_1, 0.01)
+        
         for val in values_0:
             # Add Gaussian contribution from each data point
-            y_0 += np.exp(-((x - val) ** 2) / (2 * std_0 ** 2)) / (std_0 * np.sqrt(2 * np.pi))
+            y_0 += np.exp(-((x - val) ** 2) / (2 * bandwidth_0 ** 2)) / (bandwidth_0 * np.sqrt(2 * np.pi))
         
         for val in values_1:
             # Add Gaussian contribution from each data point
-            y_1 += np.exp(-((x - val) ** 2) / (2 * std_1 ** 2)) / (std_1 * np.sqrt(2 * np.pi))
+            y_1 += np.exp(-((x - val) ** 2) / (2 * bandwidth_1 ** 2)) / (bandwidth_1 * np.sqrt(2 * np.pi))
         
         # Normalize
-        y_0 /= len(values_0)
-        y_1 /= len(values_1)
+        y_0 = y_0 / len(values_0) if len(values_0) > 0 else y_0
+        y_1 = y_1 / len(values_1) if len(values_1) > 0 else y_1
         
         # Plot density curves
         plt.plot(x, y_0, 'b', linewidth=2, label='Non-Diabetic (0)')
@@ -426,8 +430,21 @@ def plot_feature_pair_analysis(df, save_path=None):
     df: DataFrame with features and target
     save_path: Path to save the plot
     """
-    # Get top 4 features for visualization
-    features = ['Glucose', 'BMI', 'Age', 'DiabetesPedigreeFunction']
+    # Get top 4 features for visualization (or use defaults if they don't exist)
+    default_features = ['Glucose', 'BMI', 'Age', 'DiabetesPedigreeFunction']
+    features = []
+    
+    for feature in default_features:
+        if feature in df.columns:
+            features.append(feature)
+    
+    # If we don't have enough features, add more from the dataframe
+    if len(features) < 4:
+        for col in df.columns:
+            if col != 'Outcome' and col not in features:
+                features.append(col)
+                if len(features) >= 4:
+                    break
     
     # Create a 2x2 grid of scatter plots
     fig, axes = plt.subplots(2, 2, figsize=(15, 15))
@@ -435,10 +452,10 @@ def plot_feature_pair_analysis(df, save_path=None):
     
     # Feature pairs to plot
     pairs = [
-        ('Glucose', 'BMI'),
-        ('Glucose', 'Age'),
-        ('BMI', 'Age'),
-        ('DiabetesPedigreeFunction', 'Glucose')
+        (features[0], features[1]),
+        (features[0], features[2]),
+        (features[1], features[2]),
+        (features[3], features[0])
     ]
     
     for i, (feature1, feature2) in enumerate(pairs):
